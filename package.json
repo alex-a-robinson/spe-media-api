@@ -1,0 +1,24 @@
+{
+  "name": "node-rfid-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:begly/spe-media-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/begly/spe-media-api/issues"
+  },
+  "homepage": "https://github.com/begly/spe-media-api#readme",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "firebase-admin": "^4.0.2",
+    "input-event": "^1.2.0"
+  }
+}
