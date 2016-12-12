@@ -1,0 +1,100 @@
+<html>
+<body>
+    <input id="getcat" type="submit" value="Get cat"/>
+    <!--<input id="getxkcd" type="submit" value="Get xkcd"/>-->
+    <p>
+    <img id="catpic">
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script>
+    function getRandomizer(bottom, top) {
+        return function() {
+            return Math.floor( Math.random() * ( 1 + top - bottom ) ) + bottom;
+        }
+    }
+
+    function setImage(url, err) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function(e) {
+            if(this.status == 200) {
+                var uintarr = new Uint8Array(this.response);
+                var i = uintarr.length;
+                var binString = new Array(i);
+                while(i--) {
+                    binString[i] = String.fromCharCode(uintarr[i]);
+                }
+                var data = binString.join('');
+                window.base64 = window.btoa(data);
+                window.mime = this.getResponseHeader('content-type');
+                $('#catpic').attr('src', 'data:'+window.mime+';base64,'+window.base64);
+            }
+        }
+        if(err != null)
+            xhr.onerror = err;
+        xhr.send();
+    }
+
+    function newCat() {
+        setImage('http://thecatapi.com/api/images/get?format=src', newCat);
+    }
+
+    function newXkcd() {
+        $.ajax({
+            url: 'http://xkcd.com/info.0.json',
+            dataType: 'json',
+            success: function(res) {
+                var max = res.num;
+                var comic = getRandomizer(0, res.num);
+                var url = 'http://xkcd.com/' + comic + '/info.0.json'
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    success: function(res) {
+                        var src = res.img;
+                        setImage(src);
+                    }
+                });
+            }
+        });
+    }
+
+    function pollRfid() {
+        $.ajax({
+            url: 'http://raspberrypi:8080/api/last_rfid',
+            dataType: 'json',
+            success: function(res) {
+                var rfid = res.rfid;
+                if(window.lastRfid != -1 && window.lastRfid != res.time) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://raspberrypi:8080/api/upload',
+                        contentType : 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify({mime: window.mime, rfid: rfid, data: window.base64}),
+                        success: function(res) {
+                            alert('Uploaded cat!');
+                        }
+                    });
+                }
+
+                window.lastRfid = res.time;
+
+                setTimeout(pollRfid, 100);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        window.lastRfid = -1;
+        newCat();
+        pollRfid();
+        $("#getcat").click(newCat); 
+        $("#getxkcd").click(newXkcd); 
+    });
+</script>
+</html>

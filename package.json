@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/begly/spe-media-api#readme",
   "dependencies": {
-    "bluebird": "^3.4.6",
+    "@google-cloud/storage": "^0.6.0",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "firebase-admin": "^4.0.2",
-    "input-event": "^1.2.0"
+    "linux-input-device": "^1.0.0",
+    "tmp": "0.0.31"
   }
 }

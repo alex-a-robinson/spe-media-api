@@ -1,14 +1,13 @@
 var config = {};
 
-config.rfid_device = '/dev/event/xyz123'
+config.rfid_device = '/dev/input/event0'
 config.timeout = 10000;
 
-config.firebase = {};
-config.firebase.projectId = '';
-config.firebase.clientEmail = '';
-config.firebase.privateKey = '';
-config.firebase.databaseURL = '';
+config.database_url = 'https://spe-elabs.firebaseio.com';
 
-config.exid = 'EXHIBIT ID';
+config.project_id = 'spe-elabs';
+config.bucket = 'spe-elabs.appspot.com';
+
+config.scanner_id = 9001;
 
 module.exports = config;
