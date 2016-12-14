@@ -1,0 +1,61 @@
+<html>
+<body>
+    <video width=640 height=480 id="video" controls autoplay></video>
+    <canvas id="drawCanvas" style="display:none;" height="480" width="640"></canvas>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script>
+    function updateBase64() {
+        var video = document.getElementById("video");
+        var canvas = document.getElementById("drawCanvas");
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, 640, 480);
+        window.mime = "image/png";
+        var b64 = ctx.toDataURL("image/png");
+        window.base64 = b64.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+
+    function pollRfid() {
+        $.ajax({
+            url: 'http://raspberrypi:8080/api/last_rfid',
+            dataType: 'json',
+            success: function(res) {
+                var rfid = res.rfid;
+                if(window.lastRfid != -1 && window.lastRfid != res.time) {
+                    updateBase64();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'http://raspberrypi:8080/api/upload',
+                        contentType : 'application/json',
+                        dataType: 'json',
+                        data: JSON.stringify({mime: window.mime, rfid: rfid, data: window.base64}),
+                        success: function(res) {
+                            alert('Uploaded picture!');
+                        }
+                    });
+                }
+
+                window.lastRfid = res.time;
+
+                setTimeout(pollRfid, 100);
+            }
+        });
+    }
+
+    function initWebcam() {
+        navigator.getUserMedia({video: true, audio: false}, function (localStream) {
+            var video = document.getElementById("video");
+            video.src = URL.createObjectURL(localStream);
+            video.play();
+        });
+    }
+
+    $(document).ready(function() {
+        window.lastRfid = -1;
+        pollRfid();
+    });
+</script>
+</html>
