@@ -65,14 +65,14 @@
 
     function pollRfid() {
         $.ajax({
-            url: 'http://raspberrypi:8080/api/last_rfid',
+            url: 'http://192.168.1.100:8080/api/last_rfid',
             dataType: 'json',
             success: function(res) {
                 var rfid = res.rfid;
                 if(window.lastRfid != -1 && window.lastRfid != res.time) {
                     $.ajax({
                         type: 'POST',
-                        url: 'http://raspberrypi:8080/api/upload',
+                        url: 'http://localhost:8080/api/upload',
                         contentType : 'application/json',
                         dataType: 'json',
                         data: JSON.stringify({mime: window.mime, rfid: rfid, data: window.base64}),

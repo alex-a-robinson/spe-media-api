@@ -1,6 +1,6 @@
 <html>
 <body>
-    <video width=640 height=480 id="video" controls autoplay></video>
+    <video width=640 height=480 id="video" autoplay></video>
     <canvas id="drawCanvas" style="display:none;" height="480" width="640"></canvas>
 </body>
 <script
@@ -50,11 +50,12 @@
             var video = document.getElementById("video");
             video.src = URL.createObjectURL(localStream);
             video.play();
-        });
+        }, () => {});
     }
 
     $(document).ready(function() {
         window.lastRfid = -1;
+        initWebcam();
         pollRfid();
     });
 </script>

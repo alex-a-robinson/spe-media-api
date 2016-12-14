@@ -131,7 +131,7 @@ var gcs = storage({
 
 var ex = new Exhibit(gcs);
 
-ex.rfidListen();
+//ex.rfidListen();
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
