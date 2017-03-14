@@ -112,6 +112,23 @@ class Exhibit
                     res.status(500).json({status: 'FAIL'});
                 }
             });
+
+            // Upload the thumbnail
+           var thumb_opts = {
+                destination: 'user-media/' + uid + '/' + o.rfid + '/' + name + '.thumb',
+                metadata: {contentType: o.mime}
+            };
+
+            this.bucket.upload(tmpobj.name + '.thumb', thumb_opts, function(err, file) {
+                if(!err) res.json({status: 'OK'});
+                else {
+                    console.error(err);
+                    res.status(500).json({status: 'FAIL'});
+                }
+            });
+ 
+            
+
         });
 
         return {status: 'OK'};
